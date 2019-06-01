@@ -53,6 +53,7 @@ class JsonFileStorage:
     Updates entity with `upd` values for the given `entity_id`.
     """
     def update_by_id(self, entity_id, upd):
+        print(entity_id)
         entity = self.find_by_id(entity_id)
         return None if entity is None else entity.update(upd)
 
@@ -72,6 +73,6 @@ class JsonFileStorage:
                 entity_id: self.__entity_cls(entity_dict) for (entity_id, entity_dict) in simplejson.load(json_file).items()
             }
 
-    def __store_cache(self):
+    def store_cache(self):
         with open(self.__file_path, 'w') as json_file:
             simplejson.dump(self.__cache, json_file, indent=4, for_json=True)

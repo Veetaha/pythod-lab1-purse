@@ -1,1 +1,22 @@
-{}
+{
+    "b580ade5-7651-4cb2-9421-5f30c8427e06": {
+        "id": "b580ade5-7651-4cb2-9421-5f30c8427e06",
+        "ccy": "UAH",
+        "total": 123
+    },
+    "0dfcd0a5-ad22-4773-ac68-e42d09822adc": {
+        "id": "0dfcd0a5-ad22-4773-ac68-e42d09822adc",
+        "ccy": "UAH",
+        "total": 0.0
+    },
+    "2fd0781c-6ff3-4bac-b54f-72edd34c2e2b": {
+        "id": "2fd0781c-6ff3-4bac-b54f-72edd34c2e2b",
+        "ccy": "UAH",
+        "total": 1000.0
+    },
+    "88cc0847-bc17-4b55-94e1-0dc575c4862b": {
+        "id": "88cc0847-bc17-4b55-94e1-0dc575c4862b",
+        "ccy": "EUR",
+        "total": 1000.0
+    }
+}
