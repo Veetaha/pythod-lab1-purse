@@ -26,6 +26,4 @@ class PursesController(Resource):
             return {"error": "Invalid parameters"}, 400
 
     def get(self):
-        response = make_response(storage.serialize(list(storage.get_all().values())))
-        response.headers['content-type'] = 'application/json'
-        return response
+        return storage.create_json_response(list(storage.get_all().values()))

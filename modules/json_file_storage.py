@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+from flask import make_response
 import signal
 import os
 import simplejson
+
 
 
 class JsonFileStorage:
@@ -39,13 +41,30 @@ class JsonFileStorage:
     Deletes entity from the cache. Returns deleted entity or `None` if nothing was found.
     """
     def delete_by_id(self, entity_id):
-        self.__cache.pop(entity_id, None)
+        return self.__cache.pop(entity_id, None)
 
     """
     Returns entity by the given id or `None` if nothing was found.
     """
     def find_by_id(self, entity_id):
         return self.__cache.get(entity_id)
+
+    """
+    Updates entity with `upd` values for the given `entity_id`.
+    """
+    def update_by_id(self, entity_id, upd):
+        entity = self.find_by_id(entity_id)
+        return None if entity is None else entity.update(upd)
+
+
+    """
+    Creates flask response that contains `entities` json representation and returns it.
+    """
+    def create_json_response(self, entities):
+        if entities is None: return None, 404
+        response = make_response(self.serialize(entities))
+        response.headers['content-type'] = 'application/json'
+        return response
 
     def __load_cache(self):
         with open(self.__file_path, 'r') as json_file:
@@ -56,5 +75,3 @@ class JsonFileStorage:
     def __store_cache(self):
         with open(self.__file_path, 'w') as json_file:
             simplejson.dump(self.__cache, json_file, indent=4, for_json=True)
-            # json.dump(self.__create_json_from_cache(), json_file, indent=4)
-
