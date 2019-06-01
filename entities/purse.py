@@ -1,10 +1,14 @@
-from modules.config import data_dir
 from modules.json_entity import JsonEntity
 
 
-class Purse(JsonEntity(f'{data_dir}/purse.json')):
-    def __init__(self, total=0, ccy='UAH'):
-        super().__init__()
-        self.ccy = ccy
-        self.total = total
-
+@JsonEntity(
+    file_path='data/purse.json',
+    data_schema={
+        'ccy':   str,
+        'total': lambda value: float(value) >= 0
+    }
+)
+class Purse:
+    def __init__(self, json):
+        self.ccy = json['ccy']
+        self.total = float(json['total'])

@@ -1,32 +1,33 @@
-from modules.identifiable import Identifiable
+from uuid import uuid4
+
+from schema import Schema, Optional
+
 from modules.json_file_storage import JsonFileStorage
 
 
-def JsonEntity(file_path: str):
+def JsonEntity(file_path: str, data_schema: dict):
+    data_schema[Optional('id')] = str
+    schema = Schema(data_schema)
 
-    class BaseEntity(Identifiable):
+    def entity_decorator(entity_cls):
+        class Entity(entity_cls):
+            def __init__(self, json):
+                schema.validate(json)
 
-        def __init__(self): super().__init__()
+                super().__init__(json)
+                if 'id' in json and type(json['id']) == 'str':
+                    self.id = json['id']
+                else:
+                    self.id = str(uuid4())
 
-        @staticmethod
-        def find_by_id(entity_id): return storage.get(entity_id)
+            def for_json(self): return self.__dict__
 
-        @staticmethod
-        def delete_by_id(entity_id): return storage.delete(entity_id)
+            @staticmethod
+            def get_storage(): return storage
 
-        @staticmethod
-        def get_all():
-            return storage.get_all()
+            @staticmethod
+            def get_schema(): return schema
 
-        def save(self):
-            storage.insert(self)
-            return self
-
-        def delete(self):
-            return storage.delete(self.get_id())
-
-        def to_json(self): return storage.serialize(self)
-
-    storage = JsonFileStorage(file_path, BaseEntity)
-
-    return BaseEntity
+        storage = JsonFileStorage(file_path, Entity)
+        return Entity
+    return entity_decorator

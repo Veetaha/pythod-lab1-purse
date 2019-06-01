@@ -1,43 +1,60 @@
 #!/usr/bin/env python
 import signal
 import os
-import json
+import simplejson
 
 
 class JsonFileStorage:
     def __init__(self, file_path, entity_cls):
-        self.file_path = file_path
-        self.entity_cls = entity_cls
+        self.__file_path = file_path
+        self.__entity_cls = entity_cls
 
         if os.path.isfile(file_path):
-            self.load_cache()
+            self.__load_cache()
         else:
-            self.cache: dict[str, object] = {}
-            self.store_cache()
+            self.__cache: dict[str, object] = {}
+            self.__store_cache()
 
-        signal.signal(signal.SIGINT, lambda signals, frame_type: self.store_cache())
+        signal.signal(signal.SIGINT, lambda signals, frame_type: self.__store_cache())
 
-    def get_all(self): return self.cache
+    """
+    Returns a dictionary that contains all the entities in the storage.
+    """
+    def get_all(self):
+        return self.__cache
 
-    def serialize(self, entity): json.dumps(entity)
+    """
+    Returns json compatible dictionary representation of `entity`.
+    """
+    def serialize(self, json_adt): return simplejson.dumps(json_adt, indent=4, for_json=True)
 
+    """
+    Inserts `entity` to the storage cache.
+    """
     def insert(self, entity):
-        self.cache[entity.get_id()] = entity
+        self.__cache[entity.id] = entity
+        return entity
 
-    def delete(self, entity_id):
-        self.cache.pop(entity_id, None)
+    """
+    Deletes entity from the cache. Returns deleted entity or `None` if nothing was found.
+    """
+    def delete_by_id(self, entity_id):
+        self.__cache.pop(entity_id, None)
 
-    def get(self, entity_id):
-        return self.cache.get(entity_id)
+    """
+    Returns entity by the given id or `None` if nothing was found.
+    """
+    def find_by_id(self, entity_id):
+        return self.__cache.get(entity_id)
 
-    def load_cache(self):
-        with open(self.file_path, 'r') as json_file:
-            self.cache = {entity_id: self.entity_cls(**entity_dict) for entity_id, entity_dict in json.load(json_file)}
+    def __load_cache(self):
+        with open(self.__file_path, 'r') as json_file:
+            self.__cache = {
+                entity_id: self.__entity_cls(entity_dict) for (entity_id, entity_dict) in simplejson.load(json_file).items()
+            }
 
-    def create_json_from_cache(self):
-        return {k: v.__dict__ for k, v in self.cache.items()}
-
-    def store_cache(self):
-        with open(self.file_path, 'w') as json_file:
-            json.dump(self.create_json_from_cache(), json_file, indent=4)
+    def __store_cache(self):
+        with open(self.__file_path, 'w') as json_file:
+            simplejson.dump(self.__cache, json_file, indent=4, for_json=True)
+            # json.dump(self.__create_json_from_cache(), json_file, indent=4)
 

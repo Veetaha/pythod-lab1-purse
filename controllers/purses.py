@@ -1,3 +1,7 @@
+import schema
+import json
+
+from flask import make_response
 from flask_restful import reqparse, Resource
 
 from entities.purse import Purse
@@ -5,6 +9,8 @@ from entities.purse import Purse
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('total')
 post_parser.add_argument('ccy')
+
+storage = Purse.get_storage()
 
 
 class PursesController(Resource):
@@ -14,7 +20,12 @@ class PursesController(Resource):
         api.add_resource(cls, '/purses')
 
     def post(self):
-        return Purse(**post_parser.parse_args()).save().get_id()
+        try:
+            return {"id": storage.insert(Purse(post_parser.parse_args())).id}, 200
+        except:
+            return {"error": "Invalid parameters"}, 400
 
     def get(self):
-        return Purse.get_all()
+        response = make_response(storage.serialize(list(storage.get_all().values())))
+        response.headers['content-type'] = 'application/json'
+        return response
