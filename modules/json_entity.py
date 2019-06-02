@@ -7,7 +7,7 @@ from modules.json_file_storage import JsonFileStorage
 
 def JsonEntity(file_path: str, data_schema: dict):
     data_schema[Optional('id')] = str
-    upd_schema = Schema({ Optional(k): v for k, v in data_schema.items()})
+    upd_schema = Schema({Optional(k): v for k, v in data_schema.items()})
     schema = Schema(data_schema)
 
     def entity_decorator(entity_cls):
@@ -18,11 +18,7 @@ def JsonEntity(file_path: str, data_schema: dict):
             """
             def __init__(self, json):
                 schema.validate(json)
-                if 'id' in json and type(json['id']) == str:
-                    self.id = json['id']
-                else:
-                    self.id = str(uuid4())
-
+                self.id = json['id'] if 'id' in json and type(json['id']) == str else str(uuid4())
                 super().__init__(json)
 
             """
@@ -36,19 +32,9 @@ def JsonEntity(file_path: str, data_schema: dict):
             @staticmethod
             def get_storage(): return storage
 
-            """
-            Retuns `data_schema` that was forwarded to `@Entity()` decorator for validation._
-            """
-            @staticmethod
-            def get_schema(): return schema
 
-            """
-            Assigns keys and values that are stored in `upd` dict to the current entity.
-            Argument `upd` gets validated prior to assignment, so be read to catch a `SchemaError`.
-            Key `id` must not be present in the given `upd` dict.
-            """
             def update(self, upd):
-                upd = { k: v for k, v in upd.items() if v is not None}
+                upd = {k: v for k, v in upd.items() if v is not None}
                 upd_schema.validate(upd)
                 self.__dict__.update(upd)
                 return self

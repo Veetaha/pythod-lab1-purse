@@ -1,7 +1,10 @@
 from os import path, system, name
 from sys import modules
-from flask import request, Response
+
 import simplejson
+from flask import request, Response
+
+
 def clear():
     """
     Clear console function os-independent
