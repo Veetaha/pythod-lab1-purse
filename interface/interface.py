@@ -4,8 +4,6 @@ import math
 from help.help import clear
 from entities.purse import Purse
 
-
-
 class ConsoleInterface:
     def __init__(self):
          self.storage = Purse.get_storage()
@@ -13,7 +11,6 @@ class ConsoleInterface:
     def console_init(self):
         input_is_correct = True
         while True:
-            # clear()
             if input_is_correct:
                 print("Main menu:\n1.Create purse\n2.Get all purses\n3.Update purse\n4.Delete purse\n5.Exit")
             else:
