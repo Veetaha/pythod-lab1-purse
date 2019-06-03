@@ -12,6 +12,7 @@ api = Api(app)
 PurseController.apply_middleware(api)
 PursesController.apply_middleware(api)
 
+
 def run_job():
     time.sleep(1)
     console_interface = ConsoleInterface()
@@ -20,6 +21,7 @@ def run_job():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
 
 if __name__ == '__main__':
     t = threading.Thread(target=run_job)

@@ -1,4 +1,5 @@
 from os import path, system, name
+
 def clear():
     """
     Clear console function os-independent
