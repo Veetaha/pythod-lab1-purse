@@ -2,11 +2,16 @@
     "2fd0781c-6ff3-4bac-b54f-72edd34c2e2b": {
         "id": "2fd0781c-6ff3-4bac-b54f-72edd34c2e2b",
         "ccy": "UAH",
-        "total": 1000.0
+        "total": 123
     },
     "88cc0847-bc17-4b55-94e1-0dc575c4862b": {
         "id": "88cc0847-bc17-4b55-94e1-0dc575c4862b",
         "ccy": "EUR",
+        "total": 1000.0
+    },
+    "5b62d2ab-1783-43bc-a6ec-76d5d3d8520c": {
+        "id": "5b62d2ab-1783-43bc-a6ec-76d5d3d8520c",
+        "ccy": "UAH",
         "total": 1000.0
     }
 }

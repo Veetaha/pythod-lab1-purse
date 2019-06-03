@@ -14,7 +14,8 @@ class ConsoleInterface:
                 print("Main menu:\n1.Create purse\n2.Get all purses\n3.Update purse\n4.Delete purse\n5.Exit")
             else:
                 print("Your input was not correct, try again")
-            answer = prompt('Enter your variant: ')
+            print('Enter your variant: ')
+            answer = prompt()
             input_is_correct = self.__main_menu_redirect(answer)
 
     def __main_menu_redirect(self, value: int) -> bool:
@@ -44,25 +45,29 @@ class ConsoleInterface:
         if len(purses) == 0:
             print("No purses")
         else:
-            counter = 1
-            for purse in purses.values():
-                print("id:%d. %s | %d. " % (counter, purse.ccy, purse.total))
-                counter += 1
-            input_is_correct = False
-            while not input_is_correct:
-                id = prompt('Enter id of purse for update:: ')
-                if self.__number_is_valid(id) and 1 <= int(id) < counter:
-                    upd_purse = list(self.storage.get_all().values())[int(id) - 1]
-                    sum = prompt('Enter new sum for updating:: ')
-                    if self.__number_is_valid(sum):
-                        upd_purse.total = int(sum)
-                        input_is_correct = self.__try_to_add_or_change_task("UAH", upd_purse)
-                        if not input_is_correct:
-                            print("Your input was not valid, try again")
-                    else:
+            self.__update_select_purse(purses)
+
+    def __update_select_purse(self,purses):
+        counter = 1
+        for purse in purses.values():
+            print("id:%d. %s | %d. " % (counter, purse.ccy, purse.total))
+            counter += 1
+        input_is_correct = False
+        while not input_is_correct:
+            id = prompt('Enter id of purse for update:: ')
+            if self.__number_is_valid(id) and 1 <= int(id) < counter:
+                upd_purse = list(self.storage.get_all().values())[int(id) - 1]
+                print('Enter new sum for updating:: ')
+                sum = prompt()
+                if self.__number_is_valid(sum):
+                    upd_purse.total = int(sum)
+                    input_is_correct = self.__add_or_change_purse("UAH", upd_purse)
+                    if not input_is_correct:
                         print("Your input was not valid, try again")
                 else:
                     print("Your input was not valid, try again")
+            else:
+                print("Your input was not valid, try again")
 
     def __get_purses(self):
         purses = self.storage.get_all()
@@ -75,8 +80,9 @@ class ConsoleInterface:
     def __create_purse(self):
         input_is_correct = False
         while not input_is_correct:
-            ccy = prompt('Enter ccy:: ')
-            input_is_correct = self.__try_to_add_or_change_task(ccy, None)
+            print('Enter ccy:: ')
+            ccy = prompt()
+            input_is_correct = self.__add_or_change_purse(ccy, None)
             if not input_is_correct:
                 print("Your input was not valid, try again")
 
@@ -86,19 +92,23 @@ class ConsoleInterface:
         if len(purses) == 0:
             print("No purses")
         else:
-            counter = 1
-            for purse in purses.values():
-                print("id:%d. %s | %d. " % (counter, purse.ccy, purse.total))
-                counter += 1
-            input_is_correct = False
-            while not input_is_correct:
-                id = prompt('Enter id of purse for deleting:: ')
-                if self.__number_is_valid(id) and 1 <= int(id) < counter:
-                    del_purse = list(self.storage.get_all().values())[int(id) - 1]
-                    self.storage.delete_by_id(del_purse.id)
-                    input_is_correct = True
+            self.__delete__select_purse(purses)
 
-    def __try_to_add_or_change_task(self, ccy, purse):
+    def __delete__select_purse(self,purses):
+        counter = 1
+        for purse in purses.values():
+            print("id:%d. %s | %d. " % (counter, purse.ccy, purse.total))
+            counter += 1
+        input_is_correct = False
+        while not input_is_correct:
+            print('Enter id of purse for deleting:: ')
+            id = prompt()
+            if self.__number_is_valid(id) and 1 <= int(id) < counter:
+                del_purse = list(self.storage.get_all().values())[int(id) - 1]
+                self.storage.delete_by_id(del_purse.id)
+                input_is_correct = True
+
+    def __add_or_change_purse(self, ccy, purse):
 
         if purse is not None:
             self.storage.update_by_id(purse.id, {"ccy": purse.ccy, "total": purse.total})
